@@ -10,7 +10,6 @@ export class AuthService {
 
     async validateUser(login:string, password:string){
         const user = await this.userService.findOneWithLogin(login);
-        // if ( user && (await bcrypt.compare(password, user.password)) ){
             if ( user && (await bcrypt.compare(password, user.password)) ){
             const { password, ...result } = user;
             return result;
@@ -20,10 +19,9 @@ export class AuthService {
 
     async login(user: Users){
         const payload = {
+            sub: user.id,
             login: user.login,
-            sub:{
-                name:user.name
-            }
+            name: user.name
         }
 
         return {
@@ -34,16 +32,15 @@ export class AuthService {
     }
 
     async refreshToken(user: Users){
+        console.log(user)
         const payload = {
+            sub: user.id,
             login: user.login,
-            sub:{
-                name:user.name
-            }
+            name: user.name
         }
 
         return {
             acessToken: this.jwtService.sign(payload),
-            refreshToken: this.jwtService.sign(payload, {expiresIn: '7d'})
         }
     }
 
